@@ -6,8 +6,12 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt"
+	"github.com/joho/godotenv"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -54,6 +58,64 @@ func RegisterUserHandler(db *sql.DB, c *gin.Context) {
 }
 
 func LoginUserHandler(db *sql.DB, c *gin.Context) {
+	var userlogin models.UserLoginInfo
+	if err := godotenv.Load(); err != nil {
+		log.Println(err)
+	}
+
+	jwtSecret := os.Getenv("JWT_SECRET")
+
+	if err := c.ShouldBindJSON(&userlogin); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"Error": "Invalid Credentials"})
+		return
+	}
+
+	var usrnm string
+
+	//? Query the database for the username
+	err := db.QueryRow("SELECT UserName from users WHERE UserName = ?", userlogin.Username).Scan(&usrnm)
+
+	if err == sql.ErrNoRows {
+		c.JSON(http.StatusUnauthorized, gin.H{"Error": fmt.Sprintf("UserName %s is not present in the database", userlogin.Username)})
+		return
+	} else if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"Error": "There is some internal Error in the server"})
+		return
+	}
+
+	var storedHashPass string
+
+	if err := db.QueryRow("SELECT UserPass FROM users WHERE UserName = ?", usrnm).Scan(&storedHashPass); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"Error": "Could not retrieve the Password from Database"})
+		return
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(storedHashPass), []byte(userlogin.Userpass)); err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"Error": "Invalid Password"})
+		return
+	}
+	//!JWT TOKEN Generation
+
+	claims := models.Claims{
+		Username: userlogin.Username,
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: time.Now().Add(1 * time.Hour).Unix(),
+		},
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	//! signing the token with signing string
+	tokenString, err := token.SignedString([]byte(jwtSecret))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"Error": "Could not sing the token with secret"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "User is successfully logged in!",
+		"token":   tokenString,
+	})
 
 }
 
