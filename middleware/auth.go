@@ -39,7 +39,7 @@ func JWTAuthMiddlerware() gin.HandlerFunc {
 
 		tokenString := parts[1]
 
-		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		token, err := jwt.ParseWithClaims(tokenString, &models.Claims{}, func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, fmt.Errorf("unexpected signing method %v", token.Header["alg"])
 			}
@@ -52,8 +52,17 @@ func JWTAuthMiddlerware() gin.HandlerFunc {
 			return
 		}
 
+		if err := token.Claims.Valid(); err != nil {
+			log.Println("Claims validation failed:", err)
+			c.JSON(http.StatusUnauthorized, gin.H{"Error": "Invalid claims"})
+			c.Abort()
+			return
+		}
+
+		log.Printf("Claims type: %T", token.Claims)
 		claims, ok := token.Claims.(*models.Claims)
 		if !ok {
+			log.Printf("Error while extracting claims %s", token.Claims)
 			c.JSON(http.StatusUnauthorized, gin.H{"Error": "Can not extract the claims"})
 			c.Abort()
 			return

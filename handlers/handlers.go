@@ -124,6 +124,25 @@ func LoginUserHandler(db *sql.DB, c *gin.Context) {
 }*/
 
 func GetUserByUsernameHandler(db *sql.DB, c *gin.Context) {
+	username := c.MustGet("UserName").(string)
+
+	var info models.InfoAboutUser
+
+	err := db.QueryRow("SELECT UserId,UserName,EmailAddr,CreatedAt From users WHERE UserName = ?", username).Scan(&info.Id, &info.Username, &info.Email, &info.TimedCreated)
+
+	if err == sql.ErrNoRows {
+		c.JSON(http.StatusNotFound, gin.H{"Error": "There is no such user in the database"})
+	} else if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"Error": "Internal server error"})
+	}
+
+	infromation := models.InfoAboutUser{
+		Id:           info.Id,
+		Username:     info.Username,
+		Email:        info.Email,
+		TimedCreated: info.TimedCreated,
+	}
+	c.JSON(http.StatusOK, infromation)
 
 }
 

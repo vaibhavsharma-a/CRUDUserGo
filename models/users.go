@@ -17,3 +17,10 @@ type UserLoginInfo struct {
 	Username string `json:"UserName"`
 	Userpass string `json:"UserPass"`
 }
+
+type InfoAboutUser struct {
+	Id           string `json:"UserId"`
+	Username     string `json:"UserName"`
+	Email        string `json:"EmailAddr"`
+	TimedCreated string `json:"CreatedAt"`
+}
