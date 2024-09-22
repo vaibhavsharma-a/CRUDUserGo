@@ -55,18 +55,17 @@ func main() {
 		handlers.LoginUserHandler(db, c)
 	})
 
-	/*router.GET("/users", func(c *gin.Context) {
-		handlers.GetAllUsersHandler(db, c)
-	})*/
-
 	router.GET("/user/:username", middleware.JWTAuthMiddlerware(), func(c *gin.Context) {
 		handlers.GetUserByUsernameHandler(db, c)
 	})
 
-	router.DELETE("user/:username", middleware.JWTAuthMiddlerware(), func(c *gin.Context) {
+	router.DELETE("deluser/:username", middleware.JWTAuthMiddlerware(), func(c *gin.Context) {
 		handlers.DeleteUserByIdHanlder(db, c)
 	})
 
+	router.PUT("/update/:username", middleware.JWTAuthMiddlerware(), func(c *gin.Context) {
+		handlers.UpdateUserByUsernameHandler(db, c)
+	})
 	router.Run(":8080")
 
 }

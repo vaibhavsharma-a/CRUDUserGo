@@ -119,10 +119,6 @@ func LoginUserHandler(db *sql.DB, c *gin.Context) {
 
 }
 
-/*func GetAllUsersHandler(db *sql.DB, c *gin.Context) {
-
-}*/
-
 func GetUserByUsernameHandler(db *sql.DB, c *gin.Context) {
 	username := c.MustGet("UserName").(string)
 
@@ -166,5 +162,40 @@ func DeleteUserByIdHanlder(db *sql.DB, c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"Deleted": fmt.Sprintf("%s has been deleted from the database, You may logout", username)})
+
+}
+
+func UpdateUserByUsernameHandler(db *sql.DB, c *gin.Context) {
+	username := c.MustGet("UserName").(string)
+
+	var updtInfo models.UpdateUserInfo
+
+	if err := c.ShouldBindJSON(&updtInfo); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"Error": "Invalid Inputs"})
+		return
+	}
+
+	if updtInfo.Userpass != "" {
+		hashUpdatePass, err := bcrypt.GenerateFromPassword([]byte(updtInfo.Userpass), bcrypt.DefaultCost)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"Error": "Failed to hash the password"})
+			return
+		}
+		updtInfo.Userpass = string(hashUpdatePass)
+	}
+
+	_, err := db.Exec(`
+				UPDATE users
+				SET
+					UserName = COALESCE(NULLIF(?,''),UserName),
+					EmailAddr = COALESCE(NULLIF(?,''),EmailAddr),
+					UserPass = COALESCE(NULLIF(?,''),UserPass)
+				WHERE UserName = ?`, updtInfo.Username, updtInfo.Email, updtInfo.Userpass, username)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"Error": "Failed to Update the Info"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"Success": fmt.Sprintf("%s Info is successfully Updated", username)})
 
 }

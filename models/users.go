@@ -24,3 +24,9 @@ type InfoAboutUser struct {
 	Email        string `json:"EmailAddr"`
 	TimedCreated string `json:"CreatedAt"`
 }
+
+type UpdateUserInfo struct {
+	Username string `json:"UserName,omitempty"`
+	Userpass string `json:"UserPass,omitempty"`
+	Email    string `json:"EmailAddr,omitempty"`
+}
