@@ -147,5 +147,24 @@ func GetUserByUsernameHandler(db *sql.DB, c *gin.Context) {
 }
 
 func DeleteUserByIdHanlder(db *sql.DB, c *gin.Context) {
+	username := c.MustGet("UserName").(string)
+
+	deleteStmt, err := db.Prepare("DELETE FROM users WHERE UserName = ?")
+
+	if err != nil {
+		log.Printf("Error while preparing Query: %s", err)
+		return
+	}
+	defer deleteStmt.Close()
+
+	_, err = deleteStmt.Exec(username)
+	if err == sql.ErrNoRows {
+		c.JSON(http.StatusUnauthorized, gin.H{"Error": fmt.Sprintf("%s Does not exist in the database", username)})
+		return
+	} else if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"Error": "There is some internal server error"})
+	}
+
+	c.JSON(http.StatusOK, gin.H{"Deleted": fmt.Sprintf("%s has been deleted from the database, You may logout", username)})
 
 }

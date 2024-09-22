@@ -63,7 +63,7 @@ func main() {
 		handlers.GetUserByUsernameHandler(db, c)
 	})
 
-	router.DELETE("user/:id", func(c *gin.Context) {
+	router.DELETE("user/:username", middleware.JWTAuthMiddlerware(), func(c *gin.Context) {
 		handlers.DeleteUserByIdHanlder(db, c)
 	})
 
