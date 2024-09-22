@@ -119,11 +119,11 @@ func LoginUserHandler(db *sql.DB, c *gin.Context) {
 
 }
 
-func GetAllUsersHandler(db *sql.DB, c *gin.Context) {
+/*func GetAllUsersHandler(db *sql.DB, c *gin.Context) {
 
-}
+}*/
 
-func GetUserByIdHandler(db *sql.DB, c *gin.Context) {
+func GetUserByUsernameHandler(db *sql.DB, c *gin.Context) {
 
 }
 

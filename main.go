@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"dbgo/handlers"
+	"dbgo/middleware"
 	"fmt"
 	"log"
 
@@ -54,12 +55,12 @@ func main() {
 		handlers.LoginUserHandler(db, c)
 	})
 
-	router.GET("/users", func(c *gin.Context) {
+	/*router.GET("/users", func(c *gin.Context) {
 		handlers.GetAllUsersHandler(db, c)
-	})
+	})*/
 
-	router.GET("/user/:id", func(c *gin.Context) {
-		handlers.GetUserByIdHandler(db, c)
+	router.GET("/user/:username", middleware.JWTAuthMiddlerware(), func(c *gin.Context) {
+		handlers.GetUserByUsernameHandler(db, c)
 	})
 
 	router.DELETE("user/:id", func(c *gin.Context) {
