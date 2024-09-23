@@ -25,7 +25,7 @@ func main() {
 		}
 	}
 
-	db_user := os.Getenv("DB_user")
+	db_user := os.Getenv("DB_User")
 	db_passwrd := os.Getenv("DB_Pass")
 	db_host := os.Getenv("DB_Host")
 	db_port := os.Getenv("DB_Port")
