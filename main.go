@@ -70,6 +70,12 @@ func main() {
 	router.PUT("/update/:username", middleware.JWTAuthMiddlerware(), func(c *gin.Context) {
 		handlers.UpdateUserByUsernameHandler(db, c)
 	})
-	router.Run(":8080")
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080" // Fallback to default port for local development
+	}
+
+	router.Run(":" + port)
 
 }
