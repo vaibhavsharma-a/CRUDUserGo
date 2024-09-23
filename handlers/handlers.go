@@ -59,8 +59,11 @@ func RegisterUserHandler(db *sql.DB, c *gin.Context) {
 
 func LoginUserHandler(db *sql.DB, c *gin.Context) {
 	var userlogin models.UserLoginInfo
-	if err := godotenv.Load(); err != nil {
-		log.Println(err)
+
+	if os.Getenv("APP_ENV") != "production" {
+		if err := godotenv.Load(); err != nil {
+			log.Println(err)
+		}
 	}
 
 	jwtSecret := os.Getenv("JWT_SECRET")

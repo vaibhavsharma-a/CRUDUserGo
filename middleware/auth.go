@@ -14,9 +14,13 @@ import (
 )
 
 func JWTAuthMiddlerware() gin.HandlerFunc {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading the env file")
+
+	if os.Getenv("APP_ENV") != "production" {
+		err := godotenv.Load()
+		if err != nil {
+			log.Fatal("Error loading the env file")
+		}
+
 	}
 
 	jwtSecret := os.Getenv("JWT_SECRET")

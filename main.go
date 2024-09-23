@@ -18,9 +18,13 @@ import (
 var db *sql.DB
 
 func main() {
-	if err := godotenv.Load(); err != nil {
-		log.Println(err)
+
+	if os.Getenv("APP_ENV") != "production" {
+		if err := godotenv.Load(); err != nil {
+			log.Println(err)
+		}
 	}
+
 	db_user := os.Getenv("DB_user")
 	db_passwrd := os.Getenv("DB_Pass")
 	db_host := os.Getenv("DB_Host")
