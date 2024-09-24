@@ -64,7 +64,8 @@ func JWTAuthMiddlerware() gin.HandlerFunc {
 		}
 
 		log.Printf("Claims type: %T", token.Claims)
-		claims, ok := token.Claims.(*models.Claims)
+
+		claims, ok := token.Claims.(*models.Claims) //! type assertion of token.Claims interface to the custome struct Claims
 		if !ok {
 			log.Printf("Error while extracting claims %s", token.Claims)
 			c.JSON(http.StatusUnauthorized, gin.H{"Error": "Can not extract the claims"})
