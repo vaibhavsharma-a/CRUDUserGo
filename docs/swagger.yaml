@@ -1,0 +1,66 @@
+basePath: /
+definitions:
+  models.UsersInfo:
+    properties:
+      EmailAddr:
+        type: string
+      UserName:
+        type: string
+      UserPass:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: vaibhav1863sharma@gmail.com
+    name: vaibhav sharma
+    url: https://www.linkedin.com/in/sharmaaavaibhav/
+  description: This API allows to user to create,get info about,update & delete a
+    user
+  license:
+    name: MIT
+    url: https://opensource.org/license/mit
+  title: This is a RESTFul CRUD API
+  version: "1.0"
+paths:
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: Take user info and update it to the database
+      parameters:
+      - description: Info about the user
+        in: body
+        name: userinfo
+        required: true
+        schema:
+          $ref: '#/definitions/models.UsersInfo'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: The user {username} added successfully in database
+          schema:
+            type: string
+        "400":
+          description: 'Error: Bad Request'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: 'Error: Username {username} already exists in the database'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: 'Error: Failed to hash the password'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Register user to the Database
+      tags:
+      - userinfo
+swagger: "2.0"

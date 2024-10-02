@@ -1,0 +1,98 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This API allows to user to create,get info about,update \u0026 delete a user",
+        "title": "This is a RESTFul CRUD API",
+        "contact": {
+            "name": "vaibhav sharma",
+            "url": "https://www.linkedin.com/in/sharmaaavaibhav/",
+            "email": "vaibhav1863sharma@gmail.com"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/license/mit"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/",
+    "paths": {
+        "/register": {
+            "post": {
+                "description": "Take user info and update it to the database",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "userinfo"
+                ],
+                "summary": "Register user to the Database",
+                "parameters": [
+                    {
+                        "description": "Info about the user",
+                        "name": "userinfo",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UsersInfo"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "The user {username} added successfully in database",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Error: Username {username} already exists in the database",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error: Failed to hash the password",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.UsersInfo": {
+            "type": "object",
+            "properties": {
+                "EmailAddr": {
+                    "type": "string"
+                },
+                "UserName": {
+                    "type": "string"
+                },
+                "UserPass": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
