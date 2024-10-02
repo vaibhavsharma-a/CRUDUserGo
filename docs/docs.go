@@ -23,6 +23,70 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/login": {
+            "post": {
+                "description": "Authenticate user and return a JWT token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Login the registered users and generate JWT token",
+                "parameters": [
+                    {
+                        "description": "User Login Credentials",
+                        "name": "userlogininfo",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UserLoginInfo"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Message : User is successfully logged in!, token : tokenstring",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Could not retrieve the password from the database",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Error: invalid passowrd",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error: Could not sign the token with secret",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/register": {
             "post": {
                 "description": "Take user info and update it to the database",
@@ -86,16 +150,34 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "models.UsersInfo": {
+        "models.UserLoginInfo": {
+            "description": "takes the info from user to log them in to the database",
             "type": "object",
             "properties": {
-                "EmailAddr": {
-                    "type": "string"
-                },
                 "UserName": {
+                    "description": "Username is name of the user used while registring\n@example \"vaibhav sharma\"",
                     "type": "string"
                 },
                 "UserPass": {
+                    "description": "Userpass is the password that is used while registring the user\n@example \"123@test\"",
+                    "type": "string"
+                }
+            }
+        },
+        "models.UsersInfo": {
+            "description": "takes info about user with email, username and password",
+            "type": "object",
+            "properties": {
+                "EmailAddr": {
+                    "description": "Email is the email address of user containing '@'\n@example \"user1@gmail.com\"",
+                    "type": "string"
+                },
+                "UserName": {
+                    "description": "Username of the user being reigstered\n@example \"vaibhav sharma\"",
+                    "type": "string"
+                },
+                "UserPass": {
+                    "description": "Userpass is the password of the user\n@example \"123@test\"",
                     "type": "string"
                 }
             }
