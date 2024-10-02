@@ -15,6 +15,18 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// RegisterUserHandler  			godoc
+// @Summary										Register user to the Database
+// @Description								Take user info and update it to the database
+// @tags											userinfo
+// @Accept										json
+// @Produce										json
+// @Param											userinfo body models.UsersInfo true "Info about the user"
+// @Success										201 {string} string "The user {username} added successfully in database"
+// @Failure										400 {object} map[string]string "Error: Bad Request"
+// @Failure										500 {object} map[string]string "Error: Failed to hash the password"
+// @Failure										409 {object} map[string]string "Error: Username {username} already exists in the database"
+// @Router                    /register [post]
 func RegisterUserHandler(db *sql.DB, c *gin.Context) {
 	var user models.UsersInfo
 
