@@ -1,6 +1,6 @@
-# RESTFul CRUD API
+# RESTful CRUD API
 ## Automated documentation using _Swagger_ with _JWT Authentication_
-This is a RESTFUl CRUD API that Creates, Reads, Update and Delete the Users from a linked database, it uses _JWT Authentication_ to generate a token that is used for the authorization on the protected with the help of a middlware, it also utilises _swagger_ for API documentation using _swagger annotations_
+This is a RESTFUl CRUD API that Creates, Reads, Update and Delete the Users from a linked database, it uses _JWT Authentication_ to generate a token that is used for the authorization on the protected with the help of a middleware, it also utilises _swagger_ for API documentation using _swagger annotations_
 
 ## Table of Contents
 - [Features](#features)
