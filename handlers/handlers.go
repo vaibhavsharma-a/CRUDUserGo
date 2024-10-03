@@ -69,6 +69,21 @@ func RegisterUserHandler(db *sql.DB, c *gin.Context) {
 
 }
 
+// LoginUserHandler  			godoc
+// @Summary								Login the registered users and generate JWT token
+// @Description						Authenticate user and return a JWT token
+// @tags									Authentication
+// @Accept								json
+// @Produce								json
+// @Param									userlogininfo body models.UserLoginInfo true "User Login Credentials"
+// @Success								201 {object} map[string]string "Message : User is successfully logged in!, token : tokenstring"
+// @Failure								400 {object} map[string]string "Error: Invalid Credentials"
+// @Failure								401 {object} map[string]string "Error: UserName {username} is not present in the database"
+// @Failure								500 {object} map[string]string "Error: There is some interanl sever error while fetching"
+// @Failure								400 {object} map[string]string "Error: Could not retrieve the password from the database"
+// @Failure								401 {object} map[string]string "Error: invalid passowrd"
+// @Failure								500 {object} map[string]string "Error: Could not sign the token with secret"
+// @Router                /login [post]
 func LoginUserHandler(db *sql.DB, c *gin.Context) {
 	var userlogin models.UserLoginInfo
 
@@ -134,6 +149,18 @@ func LoginUserHandler(db *sql.DB, c *gin.Context) {
 
 }
 
+// GetUserByNameHandler  			godoc
+// @Summary										Get details of logged in user
+// @Description								This Routes take a JWT token for authentication and retrieves details of the logged in user
+// @tags											users
+// @Accept										json
+// @Produce										json
+// @Param											Authorization header string true "JWT Token"
+// @Success										200 {object} models.InfoAboutUser "User info retrieved successfully"
+// @Failure										404 {object} map[string]string "Error: There is no such user in the database"
+// @Failure										500 {object} map[string]string "Error: Internal Server error"
+// @Router                    /user/:username [get]
+// @Security									BearerAuth
 func GetUserByUsernameHandler(db *sql.DB, c *gin.Context) {
 	username := c.MustGet("UserName").(string)
 
@@ -153,11 +180,25 @@ func GetUserByUsernameHandler(db *sql.DB, c *gin.Context) {
 		Email:        info.Email,
 		TimedCreated: info.TimedCreated,
 	}
-	c.JSON(http.StatusOK, infromation)
+	c.JSON(http.StatusOK, gin.H{"Message": "User info retrieved successfully",
+		"information": infromation,
+	})
 
 }
 
-func DeleteUserByIdHanlder(db *sql.DB, c *gin.Context) {
+// DeleteUserByNameHandler  	godoc
+// @Summary										Delete the logged in user
+// @Description								This Routes take a JWT token for authentication and deletes the logged in user
+// @tags											users
+// @Accept										json
+// @Produce										json
+// @Param											Authorization header string true "JWT Token"
+// @Success										200 {object} map[string]string "{username} has been deleted from the database, You may logout"
+// @Failure										401 {object} map[string]string "Error: {username} does not exsits in the database"
+// @Failure										500 {object} map[string]string "Error: There is some Internal Server error"
+// @Router                    /deluser/:username [delete]
+// @Security									BearerAuth
+func DeleteUserByNameHandler(db *sql.DB, c *gin.Context) {
 	username := c.MustGet("UserName").(string)
 
 	deleteStmt, err := db.Prepare("DELETE FROM users WHERE UserName = ?")
@@ -180,7 +221,21 @@ func DeleteUserByIdHanlder(db *sql.DB, c *gin.Context) {
 
 }
 
-func UpdateUserByUsernameHandler(db *sql.DB, c *gin.Context) {
+// UpdateUserByNameHandler  	godoc
+// @Summary										Update the information of logged in user
+// @Description								Takes the information to be updated and required JWT token for the authorization
+// @tags											users
+// @Accept										json
+// @Produce										json
+// @Param											Authorization header string true "JWT Token"
+// @Param											updateInfo 		body 	 models.UpdateUserInfo true "Info about the user to be updated"
+// @Success										200 {object} map[string]string "{username} Info is successfully updated"
+// @Failure										400 {object} map[string]string "Error: Invalid Inputs"
+// @Failure										500 {object} map[string]string "Error: Failed to hash the password"
+// @Failure										500 {object} map[string]string "Error: Failed to Update info"
+// @Router                    /update/:username [update]
+// @Security									BearerAuth
+func UpdateUserByNameHandler(db *sql.DB, c *gin.Context) {
 	username := c.MustGet("UserName").(string)
 
 	var updtInfo models.UpdateUserInfo

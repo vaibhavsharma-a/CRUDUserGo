@@ -37,6 +37,10 @@ func main() {
 	// @host 						localhost:8080
 	// @basepath				/
 
+	// @securityDefinitions.apikey 	BearerAuth
+	// @in 													header
+	// @name 												Authorization
+
 	//? loading the env file if the program runs locally
 	if os.Getenv("APP_ENV") != "production" {
 		if err := godotenv.Load(); err != nil {
@@ -90,12 +94,12 @@ func main() {
 
 	//? middelware protected user deletion endpoint
 	router.DELETE("deluser/:username", middleware.JWTAuthMiddlerware(), func(c *gin.Context) {
-		handlers.DeleteUserByIdHanlder(db, c)
+		handlers.DeleteUserByNameHandler(db, c)
 	})
 
 	//? middleware protected user updation endpoint
 	router.PUT("/update/:username", middleware.JWTAuthMiddlerware(), func(c *gin.Context) {
-		handlers.UpdateUserByUsernameHandler(db, c)
+		handlers.UpdateUserByNameHandler(db, c)
 	})
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
