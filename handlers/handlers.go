@@ -233,7 +233,7 @@ func DeleteUserByNameHandler(db *sql.DB, c *gin.Context) {
 // @Failure										400 {object} map[string]string "Error: Invalid Inputs"
 // @Failure										500 {object} map[string]string "Error: Failed to hash the password"
 // @Failure										500 {object} map[string]string "Error: Failed to Update info"
-// @Router                    /update/:username [update]
+// @Router                    /update/:username [put]
 // @Security									BearerAuth
 func UpdateUserByNameHandler(db *sql.DB, c *gin.Context) {
 	username := c.MustGet("UserName").(string)

@@ -23,6 +23,64 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/deluser/:username": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "This Routes take a JWT token for authentication and deletes the logged in user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Delete the logged in user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "JWT Token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{username} has been deleted from the database, You may logout",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Error: {username} does not exsits in the database",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error: There is some Internal Server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/login": {
             "post": {
                 "description": "Authenticate user and return a JWT token",
@@ -147,9 +205,171 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/update/:username": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Takes the information to be updated and required JWT token for the authorization",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Update the information of logged in user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "JWT Token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Info about the user to be updated",
+                        "name": "updateInfo",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.UpdateUserInfo"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{username} Info is successfully updated",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error: Invalid Inputs",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error: Failed to Update info",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/user/:username": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "This Routes take a JWT token for authentication and retrieves details of the logged in user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Get details of logged in user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "JWT Token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "User info retrieved successfully",
+                        "schema": {
+                            "$ref": "#/definitions/models.InfoAboutUser"
+                        }
+                    },
+                    "404": {
+                        "description": "Error: There is no such user in the database",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error: Internal Server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "models.InfoAboutUser": {
+            "description": "contains the Id,Username,Email,Timestamp when the user created in the database",
+            "type": "object",
+            "properties": {
+                "CreatedAt": {
+                    "description": "The time at which the user is registered into the database\n@eaxmple \"2024-09-20 14:32:21\"",
+                    "type": "string"
+                },
+                "EmailAddr": {
+                    "description": "Email address of the user logged in\n@example \"test@gmail.com\"",
+                    "type": "string"
+                },
+                "UserId": {
+                    "description": "Unique identifier and is automatedly genrated at the backend\n@example 2",
+                    "type": "string"
+                },
+                "UserName": {
+                    "description": "Username of the logged in user\n@example \"Vaibhav sharma\"",
+                    "type": "string"
+                }
+            }
+        },
+        "models.UpdateUserInfo": {
+            "description": "contains fields that can be updated by the user afer registring",
+            "type": "object",
+            "properties": {
+                "EmailAddr": {
+                    "description": "Email address of the user logged in\n@example \"test@gmail.com\"",
+                    "type": "string"
+                },
+                "UserName": {
+                    "description": "Username of the logged in user\n@example \"Vaibhav sharma\"",
+                    "type": "string"
+                },
+                "UserPass": {
+                    "description": "Userpass is the password that is used while registring the user\n@example \"123@test\"",
+                    "type": "string"
+                }
+            }
+        },
         "models.UserLoginInfo": {
             "description": "takes the info from user to log them in to the database",
             "type": "object",
@@ -181,6 +401,13 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`

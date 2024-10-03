@@ -1,5 +1,49 @@
 basePath: /
 definitions:
+  models.InfoAboutUser:
+    description: contains the Id,Username,Email,Timestamp when the user created in
+      the database
+    properties:
+      CreatedAt:
+        description: |-
+          The time at which the user is registered into the database
+          @eaxmple "2024-09-20 14:32:21"
+        type: string
+      EmailAddr:
+        description: |-
+          Email address of the user logged in
+          @example "test@gmail.com"
+        type: string
+      UserId:
+        description: |-
+          Unique identifier and is automatedly genrated at the backend
+          @example 2
+        type: string
+      UserName:
+        description: |-
+          Username of the logged in user
+          @example "Vaibhav sharma"
+        type: string
+    type: object
+  models.UpdateUserInfo:
+    description: contains fields that can be updated by the user afer registring
+    properties:
+      EmailAddr:
+        description: |-
+          Email address of the user logged in
+          @example "test@gmail.com"
+        type: string
+      UserName:
+        description: |-
+          Username of the logged in user
+          @example "Vaibhav sharma"
+        type: string
+      UserPass:
+        description: |-
+          Userpass is the password that is used while registring the user
+          @example "123@test"
+        type: string
+    type: object
   models.UserLoginInfo:
     description: takes the info from user to log them in to the database
     properties:
@@ -47,6 +91,44 @@ info:
   title: This is a RESTFul CRUD API
   version: "1.0"
 paths:
+  /deluser/:username:
+    delete:
+      consumes:
+      - application/json
+      description: This Routes take a JWT token for authentication and deletes the
+        logged in user
+      parameters:
+      - description: JWT Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{username} has been deleted from the database, You may logout'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: 'Error: {username} does not exsits in the database'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: 'Error: There is some Internal Server error'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Delete the logged in user
+      tags:
+      - users
   /login:
     post:
       consumes:
@@ -129,4 +211,89 @@ paths:
       summary: Register user to the Database
       tags:
       - userinfo
+  /update/:username:
+    put:
+      consumes:
+      - application/json
+      description: Takes the information to be updated and required JWT token for
+        the authorization
+      parameters:
+      - description: JWT Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Info about the user to be updated
+        in: body
+        name: updateInfo
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateUserInfo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{username} Info is successfully updated'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: 'Error: Invalid Inputs'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: 'Error: Failed to Update info'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update the information of logged in user
+      tags:
+      - users
+  /user/:username:
+    get:
+      consumes:
+      - application/json
+      description: This Routes take a JWT token for authentication and retrieves details
+        of the logged in user
+      parameters:
+      - description: JWT Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User info retrieved successfully
+          schema:
+            $ref: '#/definitions/models.InfoAboutUser'
+        "404":
+          description: 'Error: There is no such user in the database'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: 'Error: Internal Server error'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get details of logged in user
+      tags:
+      - users
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"
