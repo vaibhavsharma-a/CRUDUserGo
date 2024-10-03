@@ -91,6 +91,26 @@ _for more detailed information about the endpoints visit the swagger documentati
 
 Swagger is integrated in this project to create the automated documnetaion for the API with the help of variou swagger annotations. Swagger provied comprehensive API documentation, this documentation can be used by the user to get a better understanding of the various endpoints in the API, understand the structures and the request formats, and test the API directly from the browser by sending requests to those endpoints 
 
+once you have navigated to http://localhost:8080/swagger/index.html on your browser, you will see something like this on your browser
+
+![swagger overview](images/swagger.png)
+
+you can also get a deeper insight of the API by looking at the types of structures it uses to pass the information back and forth
+
+![API struct](images/models.png)
+
+## License
+
+This Project is licensed under the MIT License, See the LICENSE file for more details
+
+## Contact
+
+If you have any questions feel free to reach out:
+
+- Name Vaibhav Sharma
+- [Email](Vaibhav1863sharma@gmail.com)
+- [Linkedin](https://www.linkedin.com/in/sharmaaavaibhav/)
+  
 
 
   
